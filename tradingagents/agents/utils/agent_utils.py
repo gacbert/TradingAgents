@@ -2,7 +2,6 @@ from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage, AIMe
 from typing import List
 from typing import Annotated
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import RemoveMessage
 from langchain_core.tools import tool
 from datetime import date, timedelta, datetime
 import functools
@@ -15,9 +14,9 @@ from tradingagents.default_config import DEFAULT_CONFIG
 
 def create_msg_delete():
     def delete_messages(state):
-        """To prevent message history from overflowing, regularly clear message history after a stage of the pipeline is done"""
-        messages = state["messages"]
-        return {"messages": [RemoveMessage(id=m.id) for m in messages]}
+        """Reset history while keeping the initial human message."""
+        ticker = state.get("company_of_interest", "")
+        return {"messages": [HumanMessage(ticker)]}
 
     return delete_messages
 
