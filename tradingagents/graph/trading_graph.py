@@ -6,8 +6,8 @@ import json
 from datetime import date
 from typing import Dict, Any, Tuple, List, Optional
 
-from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
+from langchain_core.language_models.chat_models import BaseChatModel
 
 from tradingagents.agents import *
 from tradingagents.default_config import DEFAULT_CONFIG
@@ -24,6 +24,7 @@ from .setup import GraphSetup
 from .propagation import Propagator
 from .reflection import Reflector
 from .signal_processing import SignalProcessor
+from tradingagents.utils.llm_factory import create_chat_llm
 
 
 class TradingAgentsGraph:
@@ -55,9 +56,11 @@ class TradingAgentsGraph:
         )
 
         # Initialize LLMs
-        self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"])
-        self.quick_thinking_llm = ChatOpenAI(
-            model=self.config["quick_think_llm"], temperature=0.1
+        self.deep_thinking_llm: BaseChatModel = create_chat_llm(
+            self.config["deep_think_llm"]
+        )
+        self.quick_thinking_llm: BaseChatModel = create_chat_llm(
+            self.config["quick_think_llm"], temperature=0.1
         )
         self.toolkit = Toolkit(config=self.config)
 
