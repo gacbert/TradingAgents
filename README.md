@@ -123,6 +123,11 @@ You will need the OpenAI API for all the agents.
 ```bash
 export OPENAI_API_KEY=$YOUR_OPENAI_API_KEY
 ```
+If you want to try DeepSeek or Gemini models, set their API keys as well.
+```bash
+export DEEPSEEK_API_KEY=$YOUR_DEEPSEEK_API_KEY
+export GOOGLE_API_KEY=$YOUR_GOOGLE_API_KEY
+```
 
 ### CLI Usage
 
