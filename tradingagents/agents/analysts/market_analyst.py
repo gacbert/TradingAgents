@@ -77,7 +77,7 @@ Volume-Based Indicators:
         result = chain.invoke(state["messages"])
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "market_report": result.content,
         }
 

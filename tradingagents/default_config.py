@@ -8,8 +8,10 @@ DEFAULT_CONFIG = {
         "dataflows/data_cache",
     ),
     # LLM settings
-    "deep_think_llm": "o4-mini",
-    "quick_think_llm": "gpt-4o-mini",
+    "deep_think_llm": "deepseek-chat",
+    # Gemini Flash 1.5 is broadly available. Use this by default to avoid
+    # 404 errors that may occur with preview models.
+    "quick_think_llm": "gemini-1.5-flash-latest",
     # Debate and discussion settings
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,
