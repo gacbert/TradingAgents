@@ -8,8 +8,8 @@ DEFAULT_CONFIG = {
         "dataflows/data_cache",
     ),
     # LLM settings
-    "deep_think_llm": "o4-mini",
-    "quick_think_llm": "gpt-4o-mini",
+    "deep_think_llm": "deepseek-chat",
+    "quick_think_llm": "gemini-flash-2.5-preview",
     # Debate and discussion settings
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,

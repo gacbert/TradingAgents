@@ -155,7 +155,7 @@ An interface will appear showing results as they load, letting you track the age
 
 ### Implementation Details
 
-We built TradingAgents with LangGraph to ensure flexibility and modularity. We utilize `o1-preview` and `gpt-4o` as our deep thinking and fast thinking LLMs for our experiments. However, for testing purposes, we recommend you use `o4-mini` and `gpt-4.1-mini` to save on costs as our framework makes **lots of** API calls.
+We built TradingAgents with LangGraph to ensure flexibility and modularity. By default, `deepseek-chat` handles deep thinking while `gemini-flash-2.5-preview` is used for quick thinking. These defaults can be customized, and you may still opt for `o4-mini` and `gpt-4.1-mini` for cost‑sensitive experiments.
 
 ### Python Usage
 
@@ -180,8 +180,8 @@ from tradingagents.default_config import DEFAULT_CONFIG
 
 # Create a custom config
 config = DEFAULT_CONFIG.copy()
-config["deep_think_llm"] = "gpt-4.1-nano"  # Use a different model
-config["quick_think_llm"] = "gpt-4.1-nano"  # Use a different model
+config["deep_think_llm"] = "o4-mini"  # Use a different model
+config["quick_think_llm"] = "gpt-4.1-mini"  # Use a different model
 config["max_debate_rounds"] = 1  # Increase debate rounds
 config["online_tools"] = True # Use online tools or cached data
 

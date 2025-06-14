@@ -3,10 +3,11 @@ from typing import Any
 
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_deepseek import ChatDeepSeek
 from langchain_core.language_models.chat_models import BaseChatModel
 
 
-DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
 
 
 def create_chat_llm(model_name: str, **kwargs: Any) -> BaseChatModel:
@@ -17,12 +18,12 @@ def create_chat_llm(model_name: str, **kwargs: Any) -> BaseChatModel:
         # Google Gemini models
         return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, **kwargs)
     if model_name.lower().startswith("deepseek"):
-        # DeepSeek models via OpenAI-compatible endpoint
-        return ChatOpenAI(
+        # DeepSeek models
+        return ChatDeepSeek(
             model=model_name,
-            base_url=DEEPSEEK_BASE_URL,
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
             temperature=temperature,
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            api_base=DEEPSEEK_BASE_URL,
             **kwargs,
         )
     # Default to OpenAI models
