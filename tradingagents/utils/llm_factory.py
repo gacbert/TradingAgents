@@ -6,6 +6,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_deepseek import ChatDeepSeek
 from langchain_core.language_models.chat_models import BaseChatModel
 
+try:
+    from google.api_core.exceptions import NotFound
+except Exception:  # pragma: no cover - package may not be installed during docs build
+    NotFound = Exception
+
 
 DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
 
@@ -16,7 +21,20 @@ def create_chat_llm(model_name: str, **kwargs: Any) -> BaseChatModel:
 
     if model_name.lower().startswith("gemini"):
         # Google Gemini models
-        return ChatGoogleGenerativeAI(model=model_name, temperature=temperature, **kwargs)
+        try:
+            return ChatGoogleGenerativeAI(
+                model=model_name, temperature=temperature, **kwargs
+            )
+        except NotFound:
+            fallback = "gemini-1.5-flash-latest"
+            if model_name != fallback:
+                print(
+                    f"Model {model_name} not found. Falling back to {fallback}."
+                )
+                return ChatGoogleGenerativeAI(
+                    model=fallback, temperature=temperature, **kwargs
+                )
+            raise
     if model_name.lower().startswith("deepseek"):
         # DeepSeek models
         return ChatDeepSeek(

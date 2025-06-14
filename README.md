@@ -155,7 +155,9 @@ An interface will appear showing results as they load, letting you track the age
 
 ### Implementation Details
 
-We built TradingAgents with LangGraph to ensure flexibility and modularity. By default, `deepseek-chat` handles deep thinking while `gemini-1.5-flash-latest` is used for quick thinking. These defaults can be customized, and you may still opt for `o4-mini` and `gpt-4.1-mini` for cost‑sensitive experiments. The preview model `gemini-flash-2.5-preview` is available as an optional choice if you have access.
+We built TradingAgents with LangGraph to ensure flexibility and modularity. By default, `deepseek-chat` handles deep thinking while `gemini-1.5-flash-latest` is used for quick thinking. These defaults can be customized, and you may still opt for `o4-mini` and `gpt-4.1-mini` for cost‑sensitive experiments.
+
+If you have access to the preview model `gemini-flash-2.5-preview`, you can select it when running the CLI. The code will automatically fall back to `gemini-1.5-flash-latest` if the preview model is unavailable.
 
 ### Python Usage
 
