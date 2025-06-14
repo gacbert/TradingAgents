@@ -9,9 +9,10 @@ DEFAULT_CONFIG = {
     ),
     # LLM settings
     "deep_think_llm": "deepseek-chat",
-    # Gemini Flash 1.5 is broadly available. Use this by default to avoid
-    # 404 errors that may occur with preview models.
-    "quick_think_llm": "gemini-1.5-flash-latest",
+    # Use Gemini Flash 2.5 preview for quick thinking if available. The factory
+    # will automatically fall back to gemini-1.5-flash-latest if the preview
+    # model isn't accessible.
+    "quick_think_llm": "gemini-flash-2.5-preview",
     # Debate and discussion settings
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,
