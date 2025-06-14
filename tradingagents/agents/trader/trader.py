@@ -35,7 +35,7 @@ def create_trader(llm, memory):
         result = llm.invoke(messages)
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "trader_investment_plan": result.content,
             "sender": name,
         }

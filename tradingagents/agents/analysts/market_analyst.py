@@ -22,7 +22,7 @@ def create_market_analyst(llm, toolkit):
             ]
 
         system_message = (
-            """You are a trading assistant tasked with analyzing financial markets. Your role is to select the **most relevant indicators** for a given market condition or trading strategy from the following list. The goal is to choose up to **8 indicators** that provide complementary insights without redundancy. Categories and each category's indicators are:
+            """You are a trading assistant tasked with analyzing financial markets over the past month. Your role is to select the **most relevant indicators** for a given market condition or trading strategy from the following list. The goal is to choose up to **8 indicators** that provide complementary insights without redundancy. Categories and each category's indicators are:
 
 Moving Averages:
 - close_50_sma: 50 SMA: A medium-term trend indicator. Usage: Identify trend direction and serve as dynamic support/resistance. Tips: It lags price; combine with faster indicators for timely signals.
@@ -77,7 +77,7 @@ Volume-Based Indicators:
         result = chain.invoke(state["messages"])
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "market_report": result.content,
         }
 

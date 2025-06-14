@@ -2,23 +2,21 @@ from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage, AIMe
 from typing import List
 from typing import Annotated
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import RemoveMessage
 from langchain_core.tools import tool
 from datetime import date, timedelta, datetime
 import functools
 import pandas as pd
 import os
 from dateutil.relativedelta import relativedelta
-from langchain_openai import ChatOpenAI
 import tradingagents.dataflows.interface as interface
 from tradingagents.default_config import DEFAULT_CONFIG
 
 
 def create_msg_delete():
     def delete_messages(state):
-        """To prevent message history from overflowing, regularly clear message history after a stage of the pipeline is done"""
-        messages = state["messages"]
-        return {"messages": [RemoveMessage(id=m.id) for m in messages]}
+        """Reset history while keeping the initial human message."""
+        ticker = state.get("company_of_interest", "")
+        return {"messages": [HumanMessage(ticker)]}
 
     return delete_messages
 
@@ -115,18 +113,24 @@ class Toolkit:
     @tool
     def get_YFin_data(
         symbol: Annotated[str, "ticker symbol of the company"],
-        start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
-        end_date: Annotated[str, "Start date in yyyy-mm-dd format"],
+        start_date: Annotated[str, "Start date in yyyy-mm-dd format"] = None,
+        end_date: Annotated[str, "End date in yyyy-mm-dd format"] = None,
     ) -> str:
         """
         Retrieve the stock price data for a given ticker symbol from Yahoo Finance.
         Args:
             symbol (str): Ticker symbol of the company, e.g. AAPL, TSM
-            start_date (str): Start date in yyyy-mm-dd format
-            end_date (str): End date in yyyy-mm-dd format
+            start_date (str, optional): Start date in yyyy-mm-dd format. Defaults to 30 days before ``end_date``.
+            end_date (str, optional): End date in yyyy-mm-dd format. Defaults to today.
         Returns:
             str: A formatted dataframe containing the stock price data for the specified ticker symbol in the specified date range.
         """
+
+        if end_date is None:
+            end_date = date.today().strftime("%Y-%m-%d")
+        if start_date is None:
+            start = date.fromisoformat(end_date) - relativedelta(days=30)
+            start_date = start.strftime("%Y-%m-%d")
 
         result_data = interface.get_YFin_data(symbol, start_date, end_date)
 
@@ -136,18 +140,24 @@ class Toolkit:
     @tool
     def get_YFin_data_online(
         symbol: Annotated[str, "ticker symbol of the company"],
-        start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
-        end_date: Annotated[str, "Start date in yyyy-mm-dd format"],
+        start_date: Annotated[str, "Start date in yyyy-mm-dd format"] = None,
+        end_date: Annotated[str, "End date in yyyy-mm-dd format"] = None,
     ) -> str:
         """
         Retrieve the stock price data for a given ticker symbol from Yahoo Finance.
         Args:
             symbol (str): Ticker symbol of the company, e.g. AAPL, TSM
-            start_date (str): Start date in yyyy-mm-dd format
-            end_date (str): End date in yyyy-mm-dd format
+            start_date (str, optional): Start date in yyyy-mm-dd format. Defaults to 30 days before ``end_date``.
+            end_date (str, optional): End date in yyyy-mm-dd format. Defaults to today.
         Returns:
             str: A formatted dataframe containing the stock price data for the specified ticker symbol in the specified date range.
         """
+
+        if end_date is None:
+            end_date = date.today().strftime("%Y-%m-%d")
+        if start_date is None:
+            start = date.fromisoformat(end_date) - relativedelta(days=30)
+            start_date = start.strftime("%Y-%m-%d")
 
         result_data = interface.get_YFin_data_online(symbol, start_date, end_date)
 

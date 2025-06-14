@@ -52,7 +52,7 @@ def create_fundamentals_analyst(llm, toolkit):
         result = chain.invoke(state["messages"])
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "fundamentals_report": result.content,
         }
 
