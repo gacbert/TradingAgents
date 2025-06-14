@@ -131,6 +131,7 @@ def select_shallow_thinking_agent() -> str:
         ("GPT-4.1-nano - Ultra-lightweight model for basic operations", "gpt-4.1-nano"),
         ("GPT-4.1-mini - Compact model with good performance", "gpt-4.1-mini"),
         ("GPT-4o - Standard model with solid capabilities", "gpt-4o"),
+        ("Gemini Flash 1.5 (latest)", "gemini-1.5-flash-latest"),
         ("Gemini Flash 2.5 (preview)", "gemini-flash-2.5-preview"),
         ("Gemini Pro - Google Generative AI", "gemini-pro"),
         ("DeepSeek Chat", "deepseek-chat"),
