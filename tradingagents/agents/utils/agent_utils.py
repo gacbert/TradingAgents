@@ -10,6 +10,8 @@ import pandas as pd
 import os
 from dateutil.relativedelta import relativedelta
 from langchain_openai import ChatOpenAI
+from langchain_deepseek import ChatDeepSeek
+from langchain_google_genai import ChatGoogleGenerativeAI
 import tradingagents.dataflows.interface as interface
 from tradingagents.default_config import DEFAULT_CONFIG
 
@@ -39,6 +41,25 @@ class Toolkit:
     def __init__(self, config=None):
         if config:
             self.update_config(config)
+            
+    def get_llm(self, llm_type="deep_think", system_message=None):
+        """Get LLM instance based on configured provider"""
+        provider = self.config["llm_providers"].get(llm_type, "openai")
+        
+        if provider == "deepseek":
+            return ChatDeepSeek(
+                model=self.config["deepseek_model"],
+                api_key=self.config["deepseek_api_key"]
+            )
+        elif provider == "gemini":
+            return ChatGoogleGenerativeAI(
+                model=self.config["gemini_model"],
+                google_api_key=self.config["google_api_key"],
+                temperature=0.7,
+                convert_system_message_to_human=True,
+            )
+        else:  # Default to OpenAI
+            return ChatOpenAI(model=self.config["quick_think_llm"])
 
     @staticmethod
     @tool

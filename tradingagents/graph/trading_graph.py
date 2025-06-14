@@ -54,12 +54,12 @@ class TradingAgentsGraph:
             exist_ok=True,
         )
 
-        # Initialize LLMs
-        self.deep_thinking_llm = ChatOpenAI(model=self.config["deep_think_llm"])
-        self.quick_thinking_llm = ChatOpenAI(
-            model=self.config["quick_think_llm"], temperature=0.1
-        )
+        # Initialize toolkit first
         self.toolkit = Toolkit(config=self.config)
+        
+        # Initialize LLMs using configured providers
+        self.deep_thinking_llm = self.toolkit.get_llm("deep_think", system_message="You are a helpful AI assistant")
+        self.quick_thinking_llm = self.toolkit.get_llm("quick_think", system_message="You are a helpful AI assistant")
 
         # Initialize memories
         self.bull_memory = FinancialSituationMemory("bull_memory")

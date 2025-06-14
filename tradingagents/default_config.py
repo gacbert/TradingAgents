@@ -10,6 +10,15 @@ DEFAULT_CONFIG = {
     # LLM settings
     "deep_think_llm": "o4-mini",
     "quick_think_llm": "gpt-4o-mini",
+    # New LLM providers
+    "deepseek_api_key": os.getenv("DEEPSEEK_API_KEY", ""),
+    "google_api_key": os.getenv("GOOGLE_API_KEY", ""),
+    "deepseek_model": "deepseek-chat",
+    "gemini_model": "gemini-2.5-flash-preview-05-20",
+    "llm_providers": {
+        "deep_think": "deepseek",
+        "quick_think": "deepseek"
+    },
     # Debate and discussion settings
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,

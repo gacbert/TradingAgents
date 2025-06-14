@@ -1,6 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import time
 import json
+import re
 
 
 def create_news_analyst(llm, toolkit):
@@ -44,12 +45,41 @@ def create_news_analyst(llm, toolkit):
         prompt = prompt.partial(current_date=current_date)
         prompt = prompt.partial(ticker=ticker)
 
-        chain = prompt | llm.bind_tools(tools)
-        result = chain.invoke(state["messages"])
+        # Use full message history for context
+        full_messages = state["messages"]
+        # Handle Gemini provider with manual invocation to specify contents
+        if toolkit.config["llm_providers"].get("quick_think") == "gemini":
+            prompt_val = prompt.format_prompt(messages=full_messages)
+            # Combine all prompt messages into a single string for Gemini
+            contents = "\n\n".join([msg.content for msg in prompt_val.messages])
+            result = llm.invoke(contents=[contents])
+        else:
+            chain = prompt | llm.bind_tools(tools)
+            result = chain.invoke({"messages": full_messages})
 
+        # Clean news report: remove planning intro and duplicate lines
+        raw = result.content
+        # Skip intro paragraph(s) up to first blank line
+        parts = re.split(r"\n\s*\n", raw, maxsplit=1)
+        raw = parts[1] if len(parts) > 1 else parts[0]
+        # Remove any parenthetical planning remarks
+        raw = re.sub(r"\([^)]*(?:I will|I'll)[^)]*\)\s*", "", raw)
+        # Remove any lines starting with planning phrases
+        raw = re.sub(r"^(?:I will|I'll)[^\n]*\n+", "", raw, flags=re.IGNORECASE)
+        # Remove duplicate consecutive lines
+        lines = raw.splitlines()
+        filtered = []
+        prev = None
+        for ln in lines:
+            if ln != prev:
+                filtered.append(ln)
+            prev = ln
+        raw = "\n".join(filtered)
+        # Final cleanup: strip whitespace
+        cleaned = raw.strip()
         return {
             "messages": [result],
-            "news_report": result.content,
+            "news_report": cleaned,
         }
 
     return news_analyst_node

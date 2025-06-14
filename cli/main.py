@@ -312,8 +312,12 @@ def update_display(layout, spinner_text=None):
 
     # Add messages to table
     for timestamp, msg_type, content in recent_messages:
-        # Format content with word wrapping
-        wrapped_content = Text(content, overflow="fold")
+        # Ensure content is a string for rich Text
+        if isinstance(content, list):
+            content_str = "\n".join(content)
+        else:
+            content_str = content
+        wrapped_content = Text(content_str, overflow="fold")
         messages_table.add_row(timestamp, msg_type, wrapped_content)
 
     if spinner_text:

@@ -49,7 +49,7 @@ def create_fundamentals_analyst(llm, toolkit):
 
         chain = prompt | llm.bind_tools(tools)
 
-        result = chain.invoke(state["messages"])
+        result = chain.invoke({"messages": state["messages"]})
 
         return {
             "messages": [result],

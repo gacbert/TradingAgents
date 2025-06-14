@@ -131,6 +131,11 @@ def select_shallow_thinking_agent() -> str:
         ("GPT-4.1-nano - Ultra-lightweight model for basic operations", "gpt-4.1-nano"),
         ("GPT-4.1-mini - Compact model with good performance", "gpt-4.1-mini"),
         ("GPT-4o - Standard model with solid capabilities", "gpt-4o"),
+        ("Gemini 2.5 Flash Preview - Latest preview version", "gemini-2.5-flash-preview-05-20"),
+        ("Gemini 1.5 Flash - Stable version", "gemini-1.5-flash-001"),
+        ("Gemini 1.5 Pro - More capable model", "gemini-1.5-pro-latest"),
+        ("DeepSeek Chat - General purpose model", "deepseek-chat"),
+        ("DeepSeek Coder - Specialized in code and reasoning", "deepseek-coder"),
     ]
 
     choice = questionary.select(
@@ -170,6 +175,8 @@ def select_deep_thinking_agent() -> str:
         ("o3-mini - Advanced reasoning model (lightweight)", "o3-mini"),
         ("o3 - Full advanced reasoning model", "o3"),
         ("o1 - Premier reasoning and problem-solving model", "o1"),
+        ("DeepSeek Chat - General purpose model", "deepseek-chat"),
+        ("DeepSeek Coder - Specialized in code and reasoning", "deepseek-coder"),
     ]
 
     choice = questionary.select(

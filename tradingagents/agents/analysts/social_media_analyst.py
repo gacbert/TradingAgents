@@ -1,6 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage
 import time
 import json
+import re
 
 
 def create_social_media_analyst(llm, toolkit):
@@ -39,17 +41,40 @@ def create_social_media_analyst(llm, toolkit):
         )
 
         prompt = prompt.partial(system_message=system_message)
+        prompt = prompt.partial(system_message=system_message)
         prompt = prompt.partial(tool_names=", ".join([tool.name for tool in tools]))
         prompt = prompt.partial(current_date=current_date)
         prompt = prompt.partial(ticker=ticker)
-
-        chain = prompt | llm.bind_tools(tools)
-
-        result = chain.invoke(state["messages"])
-
+    
+        # Use manual content mapping for Gemini to ensure 'contents' specified
+        if toolkit.config["llm_providers"].get("quick_think") == "gemini":
+            prompt_val = prompt.format_prompt(messages=state["messages"])
+            # Combine all prompt messages into a single string for Gemini
+            contents = "\n\n".join([msg.content for msg in prompt_val.messages])
+            result = llm.invoke(contents=[contents])
+        else:
+            chain = prompt | llm.bind_tools(tools)
+            result = chain.invoke({"messages": state["messages"]})
+        # Clean content: remove planning and duplicate planning lines
+        raw = result.content
+        # Remove repeated date assumptions
+        raw = re.sub(r"\(I'll assume the current date is [^)]+\)\s*", "", raw)
+        # Filter out parenthetical or planning lines
+        lines = raw.splitlines()
+        filtered = []
+        for ln in lines:
+            stripped = ln.strip()
+            if stripped.startswith("(") or stripped.startswith("I will") or stripped.startswith("I'll"):
+                continue
+            filtered.append(ln)
+        raw = "\n".join(filtered)
+        # Extract body after first blank line
+        parts = re.split(r"\n\s*\n", raw, maxsplit=1)
+        body = parts[1] if len(parts) > 1 else parts[0]
+        cleaned = body.strip()
         return {
             "messages": [result],
-            "sentiment_report": result.content,
+            "sentiment_report": cleaned,
         }
 
     return social_media_analyst_node

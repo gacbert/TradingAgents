@@ -124,6 +124,37 @@ You will need the OpenAI API for all the agents.
 export OPENAI_API_KEY=$YOUR_OPENAI_API_KEY
 ```
 
+### Additional LLM Providers
+
+TradingAgents now supports additional LLM providers:
+
+#### DeepSeek
+Installation:
+```bash
+pip install langchain-deepseek
+```
+
+Environment variable:
+```bash
+export DEEPSEEK_API_KEY=your_api_key_here
+```
+
+#### Gemini
+Installation:
+```bash
+pip install langchain-google-genai
+```
+
+Environment variable:
+```bash
+export GOOGLE_API_KEY=your_api_key_here
+```
+
+Configuration:
+- Set `"llm_providers": {"deep_think": "deepseek", ...}` in your config
+- Use `"deepseek_model": "deepseek-chat"` for DeepSeek models
+- Use `"gemini_model": "gemini-1.5-flash-preview"` for Gemini models
+
 ### CLI Usage
 
 You can also try out the CLI directly by running:
