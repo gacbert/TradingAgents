@@ -2,6 +2,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import dateparser
 import time
 import random
 from tenacity import (
@@ -38,12 +39,22 @@ def getNewsData(query, start_date, end_date):
     start_date: str - start date in the format yyyy-mm-dd or mm/dd/yyyy
     end_date: str - end date in the format yyyy-mm-dd or mm/dd/yyyy
     """
+
+    # Convert date strings for query parameters and create datetime objects for
+    # filtering the results. This prevents news from outside the date range from
+    # being included (e.g. articles from last year).
     if "-" in start_date:
-        start_date = datetime.strptime(start_date, "%Y-%m-%d")
-        start_date = start_date.strftime("%m/%d/%Y")
+        start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+        start_query = start_dt.strftime("%m/%d/%Y")
+    else:
+        start_dt = datetime.strptime(start_date, "%m/%d/%Y")
+        start_query = start_date
     if "-" in end_date:
-        end_date = datetime.strptime(end_date, "%Y-%m-%d")
-        end_date = end_date.strftime("%m/%d/%Y")
+        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        end_query = end_dt.strftime("%m/%d/%Y")
+    else:
+        end_dt = datetime.strptime(end_date, "%m/%d/%Y")
+        end_query = end_date
 
     headers = {
         "User-Agent": (
@@ -59,7 +70,7 @@ def getNewsData(query, start_date, end_date):
         offset = page * 10
         url = (
             f"https://www.google.com/search?q={query}"
-            f"&tbs=cdr:1,cd_min:{start_date},cd_max:{end_date}"
+            f"&tbs=cdr:1,cd_min:{start_query},cd_max:{end_query}"
             f"&tbm=nws&start={offset}"
         )
 
@@ -76,14 +87,20 @@ def getNewsData(query, start_date, end_date):
                     link = el.find("a")["href"]
                     title = el.select_one("div.MBeuO").get_text()
                     snippet = el.select_one(".GI74Re").get_text()
-                    date = el.select_one(".LfVVr").get_text()
+                    raw_date = el.select_one(".LfVVr").get_text()
+                    parsed_date = dateparser.parse(raw_date)
+                    # Skip if we can't parse or it's outside the desired range
+                    if not parsed_date:
+                        continue
+                    if not (start_dt.date() <= parsed_date.date() <= end_dt.date()):
+                        continue
                     source = el.select_one(".NUnG9d span").get_text()
                     news_results.append(
                         {
                             "link": link,
                             "title": title,
                             "snippet": snippet,
-                            "date": date,
+                            "date": parsed_date.strftime("%Y-%m-%d"),
                             "source": source,
                         }
                     )

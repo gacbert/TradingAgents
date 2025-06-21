@@ -48,7 +48,7 @@ def create_social_media_analyst(llm, toolkit):
         result = chain.invoke(state["messages"])
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "sentiment_report": result.content,
         }
 

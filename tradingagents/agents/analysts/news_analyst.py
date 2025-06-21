@@ -48,7 +48,7 @@ def create_news_analyst(llm, toolkit):
         result = chain.invoke(state["messages"])
 
         return {
-            "messages": [result],
+            "messages": state["messages"] + [result],
             "news_report": result.content,
         }
 
